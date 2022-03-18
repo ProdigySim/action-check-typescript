@@ -125,7 +125,7 @@ function shortenMessage(s: string): string{
         if(p1.length > 100) {
             return `'${p1.substring(0, 97)}...'`
         }
-        return `'${p1}`
+        return `'${p1}'`
     })
 }
 
