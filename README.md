@@ -6,7 +6,7 @@
 
 A Github action that compile ts files and display the errors found in whole codebase and in files changed in PR.  
 
-**Used in production at [Arhia](https://github.com/Arhia)**  
+** Originally a project by [Arhia](https://github.com/Arhia/action-check-typescript), this fork is maintained independently**  
 
 - Automatically uses `yarn` or `npm ci` when lockfiles are present
 - Builds your PR, then run tsc to detect errors  🔍 
