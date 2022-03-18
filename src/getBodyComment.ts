@@ -122,11 +122,11 @@ function getListOfErrors(title: string, errors: ErrorTs[],  maxErrorLength = Inf
  * @returns shortened error message
  */
 export function shortenMessage(s: string, maxLength = Infinity): string{
-    const trimmedStr = s.replace(/'(.*?)'/g, (match, p1: string) => {
+    const trimmedStr = s.replace(/'(.*?)'([\s.])/g, (match, p1: string, p2: string) => {
         if(p1.length > 50) {
-            return `'${p1.substring(0, 47)}...'`
+            return `'${p1.substring(0, 47)}...'${p2}`
         }
-        return `'${p1}'`
+        return `'${p1}'${p2}`
     })
     if(trimmedStr.length > maxLength) {
         return `${trimmedStr.substring(0, maxLength-3)}...`
