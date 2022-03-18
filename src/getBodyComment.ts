@@ -65,7 +65,8 @@ export function getBodyCommentForProject(
     } else {
         s += `**${errorsInModifiedFiles.length} ts error${errorsInModifiedFiles.length === 1 ? '' : 's'} detected in the modified files.**  \n`
         s += BLANK_LINE
-        s += getListOfErrors(`Details`, errorsInModifiedFiles)
+        // Limit modified file errors to max length 100
+        s += getListOfErrors(`Details`, errorsInModifiedFiles, 100)
         s += BLANK_LINE
     }
 
@@ -87,7 +88,7 @@ export function getBodyCommentForProject(
     return s
 }
 
-function getListOfErrors(title: string, errors: ErrorTs[], thresholdCollapse = 5): string {
+function getListOfErrors(title: string, errors: ErrorTs[],  maxErrorLength = Infinity, thresholdCollapse = 5): string {
     const shouldUseCollapsible = errors.length > thresholdCollapse
     let s = ``
 
@@ -102,7 +103,7 @@ function getListOfErrors(title: string, errors: ErrorTs[], thresholdCollapse = 5
     s += `\nFilename|Location|Message\n`
     s += `-- | -- | -- \n`
     s += errors.map(err => {
-        const message = escapeForMarkdown(shortenMessage(err.message))
+        const message = escapeForMarkdown(shortenMessage(err.message, maxErrorLength))
         return `${err.fileName}|${err.line}, ${err.column}|${message}`
     }).join('\n')
 
@@ -120,13 +121,17 @@ function getListOfErrors(title: string, errors: ErrorTs[], thresholdCollapse = 5
  * @param s TS Error message
  * @returns shortened error message
  */
-function shortenMessage(s: string): string{
-    return s.replace(/'(.*?)'/g, (match, p1: string) => {
-        if(p1.length > 100) {
-            return `'${p1.substring(0, 97)}...'`
+export function shortenMessage(s: string, maxLength = Infinity): string{
+    const trimmedStr = s.replace(/'(.*?)'/g, (match, p1: string) => {
+        if(p1.length > 50) {
+            return `'${p1.substring(0, 47)}...'`
         }
         return `'${p1}'`
     })
+    if(trimmedStr.length > maxLength) {
+        return `${trimmedStr.substring(0, maxLength-3)}...`
+    }
+    return trimmedStr
 }
 
 export function escapeForMarkdown(s: string): string {
